@@ -1,0 +1,1 @@
+"""Core memory primitives: reader, writer, signature scan."""
