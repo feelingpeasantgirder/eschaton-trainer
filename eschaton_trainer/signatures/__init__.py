@@ -1,0 +1,1 @@
+"""Known memory signatures, versioned by game build."""
