@@ -1,0 +1,10 @@
+# Guns of Eschaton Trainer - runtime deps
+pymem>=1.12.0
+pywin32>=306
+keyboard>=0.13.5
+pygame>=2.5.2
+requests>=2.31.0
+colorama>=0.4.6
+psutil>=5.9.6
+pyyaml>=6.0.1
+numpy>=1.26.0
