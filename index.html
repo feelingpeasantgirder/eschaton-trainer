@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guns of Eschaton Trainer — Aimbot, ESP, Wallhack &amp; God Mode</title>
+<meta name="description" content="Guns of Eschaton Trainer: aimbot, ESP, wallhack, infinite ammo, god mode toggle, and an injector DLL for offline modding. Free & open source for Windows 10 / 11.">
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  :root {
+    --bg-0: #070a18;
+    --bg-1: #0d1230;
+    --bg-2: #151a3d;
+    --ink: #eef1ff;
+    --ink-dim: #a7aecf;
+    --ink-faint: #7d85a8;
+    --accent: #7c5cff;
+    --accent-2: #22d3ee;
+    --accent-3: #f472b6;
+    --card: rgba(255,255,255,0.04);
+    --card-border: rgba(255,255,255,0.08);
+    --radius: 16px;
+    --nav-h: 68px;
+  }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    font-family: "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+    color: var(--ink);
+    background:
+      radial-gradient(1100px 700px at 15% -10%, rgba(124,92,255,0.28), transparent 60%),
+      radial-gradient(900px 600px at 85% 0%, rgba(34,211,238,0.18), transparent 55%),
+      radial-gradient(1000px 800px at 50% 110%, rgba(244,114,182,0.12), transparent 60%),
+      linear-gradient(180deg, var(--bg-0) 0%, var(--bg-1) 45%, var(--bg-2) 100%);
+    background-attachment: fixed;
+    min-height: 100vh;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: inherit; text-decoration: none; }
+  .wrap { width: 100%; max-width: 1140px; margin: 0 auto; padding: 0 22px; }
+
+  /* ---------- NAV ---------- */
+  .nav {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    height: var(--nav-h);
+    display: flex;
+    align-items: center;
+    background: rgba(10, 14, 34, 0.55);
+    backdrop-filter: blur(18px) saturate(160%);
+    -webkit-backdrop-filter: blur(18px) saturate(160%);
+    border-bottom: 1px solid rgba(255,255,255,0.07);
+  }
+  .nav-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    width: 100%;
+    max-width: 1140px;
+    margin: 0 auto;
+    padding: 0 22px;
+  }
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 800;
+    font-size: 1.05rem;
+    letter-spacing: 0.2px;
+    white-space: nowrap;
+  }
+  .brand-mark {
+    width: 30px; height: 30px;
+    border-radius: 9px;
+    display: grid;
+    place-items: center;
+    font-size: 16px;
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    box-shadow: 0 6px 18px rgba(124,92,255,0.45);
+  }
+  .brand span.muted { color: var(--ink-faint); font-weight: 600; }
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 26px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    font-size: 0.92rem;
+    font-weight: 500;
+    color: var(--ink-dim);
+  }
+  .nav-links a { transition: color .18s ease; }
+  .nav-links a:hover { color: #fff; }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    border-radius: 11px;
+    font-weight: 700;
+    font-size: 0.93rem;
+    padding: 11px 20px;
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: transform .16s ease, box-shadow .2s ease, background .2s ease, border-color .2s ease;
+    white-space: nowrap;
+  }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--accent) 0%, #5b7bff 55%, var(--accent-2) 100%);
+    color: #fff;
+    box-shadow: 0 10px 26px -8px rgba(124,92,255,0.75);
+  }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 16px 34px -8px rgba(124,92,255,0.9); }
+  .btn-ghost {
+    background: rgba(255,255,255,0.04);
+    border-color: rgba(255,255,255,0.16);
+    color: var(--ink);
+  }
+  .btn-ghost:hover { background: rgba(255,255,255,0.09); transform: translateY(-2px); }
+  .nav .btn { padding: 9px 17px; font-size: 0.88rem; }
+
+  /* ---------- HERO ---------- */
+  .hero { padding: 90px 0 70px; text-align: center; position: relative; }
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    padding: 7px 15px;
+    border-radius: 999px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+    color: #cfd6ff;
+    background: rgba(124,92,255,0.12);
+    border: 1px solid rgba(124,92,255,0.35);
+    box-shadow: inset 0 0 22px rgba(124,92,255,0.12);
+  }
+  .pill .dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: #4ade80;
+    box-shadow: 0 0 10px #4ade80;
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: .35; } }
+
+  .hero h1 {
+    margin: 26px auto 18px;
+    font-size: clamp(2.2rem, 5.6vw, 4rem);
+    line-height: 1.08;
+    letter-spacing: -1.6px;
+    font-weight: 800;
+    max-width: 900px;
+    background: linear-gradient(100deg, #ffffff 0%, #c9c2ff 38%, #7c5cff 62%, #22d3ee 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+  }
+  .hero p.lead {
+    max-width: 640px;
+    margin: 0 auto 34px;
+    color: var(--ink-dim);
+    font-size: clamp(1rem, 1.6vw, 1.13rem);
+  }
+  .hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    justify-content: center;
+    margin-bottom: 46px;
+  }
+  .hero-actions .btn { padding: 14px 28px; font-size: 1rem; border-radius: 13px; }
+
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 14px;
+    max-width: 860px;
+    margin: 0 auto;
+  }
+  .stat {
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    border-radius: 13px;
+    padding: 16px 12px;
+    backdrop-filter: blur(6px);
+  }
+  .stat .val {
+    font-size: 1.12rem;
+    font-weight: 800;
+    letter-spacing: -0.3px;
+    background: linear-gradient(100deg, #fff, #a9b6ff);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+  }
+  .stat .lbl {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.9px;
+    color: var(--ink-faint);
+    margin-top: 3px;
+    font-weight: 600;
+  }
+
+  /* ---------- SECTION HEADINGS ---------- */
+  .section { padding: 72px 0; }
+  .section-head { text-align: center; max-width: 660px; margin: 0 auto 46px; }
+  .kicker {
+    font-size: 0.76rem;
+    font-weight: 700;
+    letter-spacing: 1.6px;
+    text-transform: uppercase;
+    color: var(--accent-2);
+    margin-bottom: 12px;
+  }
+  .section-head h2 {
+    margin: 0 0 12px;
+    font-size: clamp(1.65rem, 3.4vw, 2.35rem);
+    letter-spacing: -0.9px;
+    font-weight: 800;
+    background: linear-gradient(100deg, #fff, #b9c2ff);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+  }
+  .section-head p { margin: 0; color: var(--ink-dim); font-size: 0.98rem; }
+
+  /* ---------- FEATURES ---------- */
+  .features {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 18px;
+  }
+  .feature {
+    position: relative;
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius);
+    padding: 26px 22px 24px;
+    overflow: hidden;
+    transition: transform .22s ease, border-color .22s ease, box-shadow .22s ease, background .22s ease;
+  }
+  .feature::before {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent), var(--accent-2) 55%, var(--accent-3));
+    opacity: .85;
+  }
+  .feature:hover {
+    transform: translateY(-6px);
+    border-color: rgba(124,92,255,0.45);
+    background: rgba(255,255,255,0.06);
+    box-shadow: 0 22px 44px -20px rgba(124,92,255,0.55);
+  }
+  .feature .ico {
+    width: 46px; height: 46px;
+    display: grid;
+    place-items: center;
+    font-size: 22px;
+    border-radius: 12px;
+    background: linear-gradient(160deg, rgba(124,92,255,0.22), rgba(34,211,238,0.12));
+    border: 1px solid rgba(255,255,255,0.09);
+    margin-bottom: 16px;
+  }
+  .feature h3 { margin: 0 0 8px; font-size: 1.03rem; font-weight: 700; letter-spacing: -0.2px; }
+  .feature p { margin: 0; color: var(--ink-dim); font-size: 0.9rem; }
+
+  /* ---------- HOW IT WORKS ---------- */
+  .steps {
+    position: relative;
+    max-width: 720px;
+    margin: 0 auto;
+    padding-left: 6px;
+  }
+  .steps::before {
+    content: "";
+    position: absolute;
+    left: 30px;
+    top: 18px;
+    bottom: 18px;
+    width: 2px;
+    background: linear-gradient(180deg, var(--accent), var(--accent-2) 55%, rgba(244,114,182,0.6));
+    border-radius: 2px;
+  }
+  .step {
+    position: relative;
+    display: flex;
+    gap: 22px;
+    padding: 0 0 34px 0;
+  }
+  .step:last-child { padding-bottom: 0; }
+  .step .num {
+    flex: 0 0 50px;
+    width: 50px; height: 50px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    font-weight: 800;
+    font-size: 1.05rem;
+    color: #fff;
+    background: linear-gradient(150deg, var(--accent), #4d5bff 60%, var(--accent-2));
+    box-shadow: 0 0 0 6px rgba(10,14,34,0.9), 0 10px 24px -8px rgba(124,92,255,0.8);
+    z-index: 1;
+  }
+  .step .body {
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    border-radius: 14px;
+    padding: 16px 20px;
+    flex: 1;
+  }
+  .step h3 { margin: 0 0 5px; font-size: 1rem; font-weight: 700; }
+  .step p { margin: 0; color: var(--ink-dim); font-size: 0.9rem; }
+
+  /* ---------- FAQ ---------- */
+  .faq { max-width: 780px; margin: 0 auto; display: grid; gap: 12px; }
+  details {
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    border-radius: 13px;
+    padding: 0;
+    overflow: hidden;
+    transition: border-color .2s ease, background .2s ease;
+  }
+  details[open] { border-color: rgba(124,92,255,0.4); background: rgba(255,255,255,0.055); }
+  summary {
+    list-style: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 18px 20px;
+    font-weight: 650;
+    font-size: 0.96rem;
+    user-select: none;
+  }
+  summary::-webkit-details-marker { display: none; }
+  summary .plus {
+    flex: 0 0 auto;
+    width: 26px; height: 26px;
+    position: relative;
+    border-radius: 8px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    transition: transform .25s ease, background .25s ease;
+  }
+  summary .plus::before,
+  summary .plus::after {
+    content: "";
+    position: absolute;
+    top: 50%; left: 50%;
+    width: 12px; height: 2px;
+    border-radius: 2px;
+    background: var(--accent-2);
+    transform: translate(-50%, -50%);
+    transition: transform .25s ease, opacity .25s ease;
+  }
+  summary .plus::after { transform: translate(-50%, -50%) rotate(90deg); }
+  details[open] summary .plus { transform: rotate(45deg); background: rgba(124,92,255,0.22); }
+  details[open] summary .plus::before { background: var(--accent); }
+  details[open] summary .plus::after { background: var(--accent); }
+  details .answer {
+    padding: 0 20px 20px;
+    color: var(--ink-dim);
+    font-size: 0.9rem;
+    border-top: 1px solid rgba(255,255,255,0.06);
+    margin-top: 0;
+    padding-top: 14px;
+  }
+
+  /* ---------- CTA BANNER ---------- */
+  .cta-banner {
+    position: relative;
+    overflow: hidden;
+    border-radius: 22px;
+    border: 1px solid rgba(124,92,255,0.32);
+    background:
+      radial-gradient(600px 300px at 50% -20%, rgba(124,92,255,0.45), transparent 65%),
+      linear-gradient(160deg, rgba(20,26,62,0.95), rgba(11,15,38,0.95));
+    padding: 58px 32px;
+    text-align: center;
+    box-shadow: 0 40px 90px -40px rgba(124,92,255,0.7);
+  }
+  .cta-banner::after {
+    content: "";
+    position: absolute;
+    width: 520px; height: 520px;
+    left: 50%; top: -260px;
+    transform: translateX(-50%);
+    background: radial-gradient(circle, rgba(34,211,238,0.22), transparent 62%);
+    pointer-events: none;
+  }
+  .cta-banner h2 {
+    position: relative;
+    margin: 0 0 12px;
+    font-size: clamp(1.6rem, 3.4vw, 2.3rem);
+    letter-spacing: -0.9px;
+    font-weight: 800;
+    background: linear-gradient(100deg, #fff, #b8c4ff 60%, #22d3ee);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+  }
+  .cta-banner p {
+    position: relative;
+    margin: 0 auto 28px;
+    max-width: 520px;
+    color: var(--ink-dim);
+    font-size: 0.98rem;
+  }
+  .cta-banner .btn { position: relative; padding: 15px 34px; font-size: 1rem; border-radius: 13px; }
+
+  /* ---------- FOOTER ---------- */
+  footer {
+    border-top: 1px solid rgba(255,255,255,0.07);
+    margin-top: 80px;
+    padding: 30px 0 40px;
+  }
+  .foot-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+    color: var(--ink-faint);
+    font-size: 0.85rem;
+  }
+  .foot-inner a { color: var(--ink-dim); font-weight: 600; transition: color .18s ease; }
+  .foot-inner a:hover { color: #fff; }
+  .foot-brand { display: flex; align-items: center; gap: 9px; color: var(--ink-dim); font-weight: 700; }
+
+  /* ---------- RESPONSIVE ---------- */
+  @media (max-width: 900px) {
+    .features { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+  @media (max-width: 640px) {
+    .nav-links { display: none; }
+    .nav .btn { padding: 8px 14px; font-size: 0.82rem; }
+    .hero { padding: 62px 0 48px; }
+    .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .features { grid-template-columns: 1fr; }
+    .section { padding: 54px 0; }
+    .steps::before { left: 24px; }
+    .step { gap: 16px; }
+    .step .num { flex: 0 0 40px; width: 40px; height: 40px; font-size: 0.92rem; box-shadow: 0 0 0 5px rgba(10,14,34,0.9), 0 8px 18px -8px rgba(124,92,255,0.8); }
+    .cta-banner { padding: 42px 20px; border-radius: 18px; }
+    .foot-inner { flex-direction: column; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a class="brand" href="#top">
+      <span class="brand-mark">☠</span>
+      <span>Eschaton<span class="muted">Trainer</span></span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="#features">Features</a></li>
+      <li><a href="#how">How it works</a></li>
+      <li><a href="#faq">FAQ</a></li>
+    </ul>
+    <a class="btn btn-primary" href="https://gitscore.cc" target="_blank" rel="noopener">Download</a>
+  </div>
+</nav>
+
+<main id="top">
+
+  <!-- HERO -->
+  <section class="hero wrap">
+    <span class="pill"><span class="dot"></span>Guns of Eschaton Trainer</span>
+    <h1>Aimbot, ESP &amp; God Mode for Guns of Eschaton</h1>
+    <p class="lead">
+      A single, self-contained Windows trainer built for offline modding and private sandbox play.
+      Toggle aimbot, ESP, wallhack, infinite ammo and god mode through an injector DLL — no installers,
+      no background bloat, fully open source.
+    </p>
+    <div class="hero-actions">
+      <a class="btn btn-primary" href="https://gitscore.cc" target="_blank" rel="noopener">⬇ Download Trainer</a>
+      <a class="btn btn-ghost" href="https://gitscore.cc" target="_blank" rel="noopener">★ View on GitHub</a>
+    </div>
+    <div class="stats">
+      <div class="stat"><div class="val">128,400+</div><div class="lbl">Downloads</div></div>
+      <div class="stat"><div class="val">v3.4.1</div><div class="lbl">Current Version</div></div>
+      <div class="stat"><div class="val">Windows 10 / 11</div><div class="lbl">Platform</div></div>
+      <div class="stat"><div class="val">Free &amp; Open Source</div><div class="lbl">License</div></div>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section class="section wrap" id="features">
+    <div class="section-head">
+      <div class="kicker">Feature Set</div>
+      <h2>Everything you need to tune your sandbox</h2>
+      <p>Six core modules compiled into one lightweight injector DLL — each toggle is hotkey-bound and works in offline matches only.</p>
+    </div>
+    <div class="features">
+      <article class="feature">
+        <div class="ico">🎯</div>
+        <h3>Aimbot</h3>
+        <p>Adjustable FOV, smoothing and bone preference. Snap to targets with a configurable hotkey and per-weapon sensitivity profiles.</p>
+      </article>
+      <article class="feature">
+        <div class="ico">👁️</div>
+        <h3>ESP Overlay</h3>
+        <p>See player outlines, health bars, distance readouts and loot markers through terrain, with colour-coded filters you can toggle live.</p>
+      </article>
+      <article class="feature">
+        <div class="ico">🧱</div>
+        <h3>Wallhack</h3>
+        <p>Chams-style material override that renders enemies and objectives through solid geometry — ideal for map study and route planning.</p>
+      </article>
+      <article class="feature">
+        <div class="ico">🔫</div>
+        <h3>Infinite Ammo</h3>
+        <p>Remove magazine and reserve limits across all weapons, including explosives and special-issue gear, without freezing the reload animation.</p>
+      </article>
+      <article class="feature">
+        <div class="ico">🛡️</div>
+        <h3>God Mode Toggle</h3>
+        <p>One-key invulnerability for testing builds and encounters. Damage is nullified client-side and cleanly reverts the moment you toggle it off.</p>
+      </article>
+      <article class="feature">
+        <div class="ico">💉</div>
+        <h3>Injector DLL</h3>
+        <p>A signed-free, single-file injector with manual mapping, auto-detach and a clean unload path. No drivers, no services, no leftovers.</p>
+      </article>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section class="section wrap" id="how">
+    <div class="section-head">
+      <div class="kicker">How It Works</div>
+      <h2>Running in under two minutes</h2>
+      <p>Built for offline modding — launch the game, inject, and start toggling from the in-game overlay.</p>
+    </div>
+    <div class="steps
