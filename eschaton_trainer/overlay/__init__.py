@@ -1,0 +1,1 @@
+"""Pygame overlay HUD for the trainer."""
